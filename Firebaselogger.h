@@ -1,7 +1,7 @@
 #ifndef FIREBASE_LOGGER_H
 #define FIREBASE_LOGGER_H
 
-#include <FirebaseESP32.h> 
+#include <Firebase_ESP_Client.h>
 #include "SensorData.h"     
 
 //Firebase handles

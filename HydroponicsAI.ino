@@ -4,6 +4,7 @@
 #include "Display.h"
 #include "PHSensor.h"
 #include "MoistureSensor.h"
+#include "Firebaselogger.h"
 
 BlynkTimer timer;
 
@@ -60,6 +61,8 @@ void sendSensorData() {
   }
 
   displayReadings(data.ph, data.temperature, data.humidity, data.moisture, data.moistureStatus);  // Display on LCD
+
+  logSensorData(data);
 }
 
 void setup() {
@@ -68,9 +71,10 @@ void setup() {
   setupPH();                                     //Initialize pH sensor
   setupMoistureSensor();                         //Initialize Moisture sensor
   setupDisplay();                                //Initialize display
+  setupFirebase();                               //Initialize Firebase
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);     //Connect to Blynk server
   showMessage("HydroponicsAI", "System Ready");  //First message to display on LCD Display
-  timer.setInterval(10000L, sendSensorData);     //Call sendSensorData every 10 seconds(to not overwhelm Blynk and keep the traffic in control)
+  timer.setInterval(15000L, sendSensorData);     //Call sendSensorData every 10 seconds(to not overwhelm Blynk and keep the traffic in control)
 }
 
 void loop() {

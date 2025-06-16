@@ -1,14 +1,17 @@
-#include "FirebaseLogger.h"
+#include <Firebase_ESP_Client.h>
 #include <WiFi.h>
 #include <time.h>
 
+#include "FirebaseLogger.h"
+
+Firebase_ESP_Client firebaseClient;
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 
-//NTP Setup for Real-Time Timestamp (IST = GMT+5:30)
+// NTP Setup for Real-Time Timestamp (IST = GMT+5:30)
 void setupNTP() {
-  configTime(19800, 0, "pool.ntp.org");
+  configTime(19800, 0, "pool.ntp.org");  // 19800 = GMT+5:30
 }
 
 String getTimestamp() {
@@ -22,16 +25,17 @@ String getTimestamp() {
 }
 
 void setupFirebase() {
-  config.api_key = "XXXXXX_API_KEY";
-  config.database_url = "https://xxxx.firebaseio.com/";
-  auth.user.email = "xxxx@email.com";
-  auth.user.password = "xxxx";
+  config.api_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  config.database_url = "https://xxxxxxxxxxxxxxxxxxxxx.firebasedatabase.app/";
+  auth.user.email = "XXXXXXXXXXXXXXXXXXXXXX";
+  auth.user.password = "XXXXXXXXXXXXXXXX";
 
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
 
-  setupNTP();  //initialize time sync
+  setupNTP();  // initialize time sync
 }
+
 
 void logSensorData(const SensorData &data) {
   if (!data.valid) return;
@@ -42,22 +46,22 @@ void logSensorData(const SensorData &data) {
   json.set("ph", data.ph);
   json.set("moisture", data.moisture);
   json.set("moistureStatus", data.moistureStatus);
-  json.set("timestamp", getTimestamp());  
-  json.set("unix", String(time(nullptr))); //mysql like aka unix timestamp
+  json.set("timestamp", getTimestamp());
 
-  String logPath = "/hydroponics/logs/" + String(time(nullptr));
+  String timestampKey = String(time(nullptr));  // Unix time as key
 
   // Log historical entry
-  if (Firebase.RTDB.setJSON(&fbdo, logPath.c_str(), &json)) {
+  String logPath = "/hydroponics/logs/" + timestampKey;
+  if (firebaseClient.RTDB.setJSON(&fbdo, logPath.c_str(), &json)) {
     Serial.println("Firebase log (logs) success");
   } else {
     Serial.print("Firebase error (logs): ");
     Serial.println(fbdo.errorReason());
   }
 
-  // Also update latest
+  // Update latest
   String latestPath = "/hydroponics/latest";
-  if (Firebase.RTDB.setJSON(&fbdo, latestPath.c_str(), &json)) {
+  if (firebaseClient.RTDB.setJSON(&fbdo, latestPath.c_str(), &json)) {
     Serial.println("Firebase log (latest) success");
   } else {
     Serial.print("Firebase error (latest): ");
