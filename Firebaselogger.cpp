@@ -1,7 +1,7 @@
 #include <Firebase_ESP_Client.h>
 #include <WiFi.h>
 #include <time.h>
-
+#include "Credentials.h"
 #include "FirebaseLogger.h"
 
 Firebase_ESP_Client firebaseClient;
@@ -25,10 +25,10 @@ String getTimestamp() {
 }
 
 void setupFirebase() {
-  config.api_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-  config.database_url = "https://xxxxxxxxxxxxxxxxxxxxx.firebasedatabase.app/";
-  auth.user.email = "XXXXXXXXXXXXXXXXXXXXXX";
-  auth.user.password = "XXXXXXXXXXXXXXXX";
+  config.api_key =  FIREBASE_API_KEY;//from credintials
+  config.database_url = FIREBASE_DATABASE_URL ;
+  auth.user.email = FIREBASE_USER_EMAIL;
+  auth.user.password = FIREBASE_USER_PASSWORD;
 
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
