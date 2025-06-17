@@ -6,9 +6,9 @@ void setupMoistureSensor() {
 
 // Function to read raw analog value and convert to percentage
 int getMoisture() {
-  int raw = analogRead(MOISTURE_PIN);        
-  int moisture = map(raw, 0, 4095, 0, 100);  // Dry = 0 → 0%, Wet = 4095 → 100%
-  return constrain(moisture, 0, 100);        // Ensure value is within 0–100
+  int raw = analogRead(MOISTURE_PIN);                  // 0–4095
+  int moisture = map(raw, 4095, 0, 0, 100);            // Wet = 4095 → 0%, Dry = 0 → 100%
+  return constrain(moisture, 0, 100);                  // Ensure value is within 0–100
 }
 
 // Function to classify moisture level into categories

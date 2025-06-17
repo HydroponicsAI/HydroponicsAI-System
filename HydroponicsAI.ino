@@ -19,7 +19,7 @@ const float HUMIDITY_THRESHOLD = 2.0;
 const float PH_THRESHOLD = 0.1;
 const int MOISTURE_THRESHOLD = 10;
 
-//Function to send sensor values to Blynk(Only if there is a significant change)
+//Function to send sensor values to Blynk(Only if there is a significant change) as well as Firebase
 void sendSensorData() {
   SensorData data = getAllSensorData();
   if (!data.valid) {
@@ -62,20 +62,21 @@ void sendSensorData() {
 
   displayReadings(data.ph, data.temperature, data.humidity, data.moisture, data.moistureStatus);  // Display on LCD
 
-  logSensorData(data);
+  logSensorData(data);//Function to send data to the firebase
 }
 
 void setup() {
-  Serial.begin(115200);
-  setupDHT();                                    //Initialize DHT sensor
-  setupPH();                                     //Initialize pH sensor
-  setupMoistureSensor();                         //Initialize Moisture sensor
-  setupDisplay();                                //Initialize display
-  setupFirebase();                               //Initialize Firebase
-  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);     //Connect to Blynk server
-  showMessage("HydroponicsAI", "System Ready");  //First message to display on LCD Display
-  timer.setInterval(15000L, sendSensorData);     //Call sendSensorData every 10 seconds(to not overwhelm Blynk and keep the traffic in control)
+  Serial.begin(115200);                       
+  setupDHT();                                 // Initialize DHT sensor
+  setupPH();                                  // Initialize pH sensor
+  setupMoistureSensor();                      // Initialize moisture sensor
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);  // Connect to Blynk server
+  setupDisplay();
+  setupFirebase();
+  showMessage("Hydroponics", "System Ready");
+  timer.setInterval(10000L, sendSensorData);   // Call sendSensorData every  10 seconds
 }
+
 
 void loop() {
   Blynk.run();  //Run Blynk background tasks

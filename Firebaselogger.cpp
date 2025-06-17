@@ -1,19 +1,25 @@
+#include "FirebaseLogger.h"
 #include <Firebase_ESP_Client.h>
 #include <WiFi.h>
 #include <time.h>
 #include "Credentials.h"
-#include "FirebaseLogger.h"
+
+#define FIREBASE_API_KEY "AIzaSyDjTgr81ChbVLjJ42q8_OIe8_I0fXzLf7Q"
+#define FIREBASE_DATABASE_URL "https://hydroponicsai-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define FIREBASE_USER_EMAIL "dorje.wm@gmail.com"
+#define FIREBASE_USER_PASSWORD "Ladakh@123@NIELIT"
 
 Firebase_ESP_Client firebaseClient;
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 
-// NTP Setup for Real-Time Timestamp (IST = GMT+5:30)
+// Setup NTP for IST (GMT+5:30)
 void setupNTP() {
-  configTime(19800, 0, "pool.ntp.org");  // 19800 = GMT+5:30
+  configTime(19800, 0, "pool.ntp.org");
 }
 
+// Return formatted timestamp
 String getTimestamp() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
@@ -24,21 +30,32 @@ String getTimestamp() {
   return String(timeString);
 }
 
+// Initialize Firebase and auth
 void setupFirebase() {
-  config.api_key =  FIREBASE_API_KEY;//from credintials
-  config.database_url = FIREBASE_DATABASE_URL ;
+  Serial.println("Initializing Firebase...");
+
+  config.api_key = FIREBASE_API_KEY;
+  config.database_url = FIREBASE_DATABASE_URL;
   auth.user.email = FIREBASE_USER_EMAIL;
   auth.user.password = FIREBASE_USER_PASSWORD;
 
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
 
-  setupNTP();  // initialize time sync
+  setupNTP();  // Ensure time sync for timestamps
 }
 
-
+// Log sensor data to Firebase
 void logSensorData(const SensorData &data) {
-  if (!data.valid) return;
+  if (!data.valid) {
+    Serial.println("Invalid sensor data. Skipping log.");
+    return;
+  }
+
+  if (!Firebase.ready()) {
+    Serial.println("Firebase not ready. Skipping log.");
+    return;
+  }
 
   FirebaseJson json;
   json.set("temperature", data.temperature);
@@ -48,21 +65,19 @@ void logSensorData(const SensorData &data) {
   json.set("moistureStatus", data.moistureStatus);
   json.set("timestamp", getTimestamp());
 
-  String timestampKey = String(time(nullptr));  // Unix time as key
+  String timestampKey = String(time(nullptr));  // Unix timestamp
 
-  // Log historical entry
   String logPath = "/hydroponics/logs/" + timestampKey;
   if (firebaseClient.RTDB.setJSON(&fbdo, logPath.c_str(), &json)) {
-    Serial.println("Firebase log (logs) success");
+    Serial.println("Firebase: Data sent to 'logs' SUCCESSFULLY");
   } else {
-    Serial.print("Firebase error (logs): ");
+    Serial.print("Firebase Error (logs): ");
     Serial.println(fbdo.errorReason());
   }
 
-  // Update latest
   String latestPath = "/hydroponics/latest";
   if (firebaseClient.RTDB.setJSON(&fbdo, latestPath.c_str(), &json)) {
-    Serial.println("Firebase log (latest) success");
+    Serial.println("Firebase: Data sent to 'latest' SUCCESSFULLY");
   } else {
     Serial.print("Firebase error (latest): ");
     Serial.println(fbdo.errorReason());
