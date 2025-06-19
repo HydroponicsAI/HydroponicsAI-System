@@ -7,8 +7,8 @@
 #include <BlynkSimpleEsp32.h>
 #include "Display.h"  // Custom LCD wrapper
 
-char ssid[] = "DSA52s";
-char pass[] = "abcde1234456";
+char ssid[] = "Galaxy";
+char pass[] = "wangmo1999";
 
 // Non-blocking delay function
 void delayHere(unsigned long totalTime) {
@@ -25,7 +25,7 @@ void connectToWiFi() {
   showMessage("WiFi Status:", "Connecting...");
 
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 30) {
+  while (WiFi.status() != WL_CONNECTED && attempts < 1000) {
     delayHere(300);  
     Serial.print(".");
     attempts++;
