@@ -3,6 +3,7 @@
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include "SensorData.h"
 
 // LCD Configuration
 #define LCD_ADDR 0x27
@@ -17,6 +18,5 @@ extern LiquidCrystal_I2C lcd; //declaration only
 
 void setupDisplay();
 void showMessage(const String& line1, const String& line2 = "");
-void displayReadings(float ph, float temp, float humidity, float moisture, String moistureStatus);
-
+void displayReadings(const SensorData& data);
 #endif

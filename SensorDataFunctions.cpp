@@ -29,12 +29,12 @@ SensorData getAllSensorData() {
     data.valid = false;
     data.errorMsg += "pH ";
   }
-  if (data.ph > 14 || data.ph < 0) {
+  if (data.ph > 14 || data.ph < 0||isnan(data.ph)) {
     Serial.println("pH out of Bounds: " + String(data.ph, 2));
     data.valid = false;
     data.errorMsg += "pH-OOB ";//OOB stands for out of bounds
   }
-  if (data.moisture < 0 || data.moisture > 100) {
+  if (data.moisture < 0 || data.moisture > 100||isnan(data.moisture)) {
     Serial.println("Failed to read from the moisture sensor!");
     data.valid = false;
     data.errorMsg += "Moi ";

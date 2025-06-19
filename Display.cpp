@@ -18,24 +18,24 @@ void showMessage(const String& line1, const String& line2) {
   lcd.print(line2);
 }
 
-void displayReadings(float ph, float temp, float humidity, float moisture, String moistureStatus) {
+void displayReadings(const SensorData& data) {
   lcd.clear();
 
   // Line 1: Display pH and Temperature with °C symbol
   lcd.setCursor(0, 0);
   lcd.print("pH:");
-  lcd.print(ph, 1);
+  lcd.print(data.ph, 1);
   lcd.print(" T:");
-  lcd.print(temp, 1);
+  lcd.print(data.temperature, 1);
   lcd.print((char)223); // Degree symbol
   lcd.print("C");
 
   // Line 2: Display Humidity and Moisture with status
   lcd.setCursor(0, 1);
   lcd.print("H:");
-  lcd.print(humidity, 0);
+  lcd.print(data.humidity, 0);
   lcd.print("% M:");
 
-  String moistureStr = String((int)moisture) + "%(" + moistureStatus + ")";
+  String moistureStr = String((int)data.moisture) + "%(" + data.moistureStatus + ")";
   lcd.print(moistureStr);
 }

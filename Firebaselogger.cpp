@@ -2,7 +2,6 @@
 #include <Firebase_ESP_Client.h>
 #include <WiFi.h>
 #include <time.h>
-#include "Credentials.h"
 
 Firebase_ESP_Client firebaseClient;
 FirebaseData fbdo;
