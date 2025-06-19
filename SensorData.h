@@ -9,6 +9,9 @@ struct SensorData {
   float ph;
   int moisture;
   String moistureStatus;
+  int nitrogen;//npk values
+  int phosphorous;//npk values
+  int potassium;//npk vlues
   bool valid;
   String errorMsg;
 };
