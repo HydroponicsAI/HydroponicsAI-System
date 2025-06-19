@@ -2,6 +2,7 @@
 #include "DHTSensor.h"
 #include "PHSensor.h"
 #include "MoistureSensor.h"
+#include "NPKSensor.h"
 
 SensorData getAllSensorData() {
   SensorData data; // object
@@ -13,6 +14,11 @@ SensorData getAllSensorData() {
   data.ph = getPHValue();
   data.moisture = getMoisture();
   data.moistureStatus = classifyMoisture(data.moisture);
+  NPKData npk = getNPK();
+
+  data.nitrogen = npk.nitrogen;
+  data.phosphorous = npk.phosphorous;
+  data.potassium =  npk.potassium;
 
   if (isnan(data.temperature)) {
     Serial.println("Failed to read temperature from DHT sensor!");
