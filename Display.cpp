@@ -21,45 +21,37 @@ void showMessage(const String& line1, const String& line2) {
 void displayReadings(const SensorData& data) {
   static unsigned long lastDisplaySwitch = 0;
   static int currentPage = 0;
-  static const unsigned long displayInterval = 3000;  // 3 seconds per page
+  static const unsigned long displayInterval = 2000;  // 3 seconds per page
 
   unsigned long now = millis();
 
   if (now - lastDisplaySwitch >= displayInterval) {
     lastDisplaySwitch = now;
-    currentPage = (currentPage + 1) % 3;  // 0 → 1 → 2 → 0 ...
+    currentPage = (currentPage + 1) % 2;  // 0 → 1  → 0 ...
     lcd.clear();
 
     switch (currentPage) {
       case 0:
-        // Page 1: Temperature and pH
+        // Page 1: Temp, pH, Humidity, Moisture with status
         lcd.setCursor(0, 0);
-        lcd.print("Temp:");
+        lcd.print("T:");
         lcd.print(data.temperature, 1);
         lcd.print((char)223);
-        lcd.print("C");
+        lcd.print("C pH:");
+        lcd.print(data.ph, 1);
 
         lcd.setCursor(0, 1);
-        lcd.print("pH:");
-        lcd.print(data.ph, 1);
+        lcd.print("H:");
+        lcd.print(data.humidity, 0);
+        lcd.print("% M:");
+        lcd.print(data.moisture);
+        lcd.print("%(");
+        lcd.print(data.moistureStatus);
+        lcd.print(")");
         break;
 
       case 1:
-        // Page 2: Humidity and Moisture
-        lcd.setCursor(0, 0);
-        lcd.print("Humidity:");
-        lcd.print(data.humidity, 0);
-        lcd.print("%");
-
-        lcd.setCursor(0, 1);
-        lcd.print("Moist:");
-        lcd.print(data.moisture);
-        lcd.print("%");
-        lcd.print(data.moistureStatus);
-        break;
-
-      case 2:
-        // Page 3: NPK values with units (mg/Kg)
+        // Page 2: NPK values with unit after each
         lcd.setCursor(0, 0);
         lcd.print("N:");
         lcd.print(data.nitrogen);
@@ -68,9 +60,10 @@ void displayReadings(const SensorData& data) {
         lcd.setCursor(0, 1);
         lcd.print("P:");
         lcd.print(data.phosphorous);
-        lcd.print(" K:");
+        lcd.print("mg/Kg ");
+        lcd.print("K:");
         lcd.print(data.potassium);
-        lcd.print("mg");
+        lcd.print("mg/Kg");
         break;
     }
   }
