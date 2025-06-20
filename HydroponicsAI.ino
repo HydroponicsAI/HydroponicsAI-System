@@ -6,6 +6,7 @@
 #include "MoistureSensor.h"
 #include "Firebaselogger.h"
 #include "NPKSensor.h"
+#define DEBUG true
 
 BlynkTimer timer;
 
@@ -14,8 +15,6 @@ void printSensorData(const SensorData& data) {
   Serial.printf("Temperature: %.2f °C | Humidity: %.2f %% | pH: %.2f | Moisture: %d%% - %s | N: %d mg/Kg | P: %d mg/Kg | K: %d mg/Kg\n",
                 data.temperature, data.humidity, data.ph, data.moisture, data.moistureStatus.c_str(),
                 data.nitrogen, data.phosphorous, data.potassium);
-
-  delayHere(1000);
 }
 
 
@@ -84,12 +83,17 @@ void sendSensorData() {
     delayHere(1000);
     return;
   }
+  if (DEBUG) {
+    printSensorData(data);
+  }
   updateBlynkData(data);  //this will send data to blynk app
   displayReadings(data);  // Display on LCD
   logSensorData(data);    //Function to send data to the firebase
 }
 void printExecuted(const String& function_name) {
-  Serial.println(function_name + " executed successfully.");
+  if (DEBUG) {
+    Serial.println(function_name + " executed successfully.");
+  }
 }
 void setup() {
   Serial.begin(115200);
@@ -99,7 +103,7 @@ void setup() {
   printExecuted("[setupDisplay()], Display setup");
 
   showMessage("Hydroponics", "System Booting...");
-  delay(1000);
+  delayHere(1000);
 
   connectToWiFi();  // Connet to Wifi
   printExecuted("[connectToWifi()], WiFi");
@@ -130,8 +134,7 @@ void setup() {
 
 
 void loop() {
-  if (Blynk.connected()) {
-    Blynk.run();  // Only if Blynk is alive
-  }
+
+  Blynk.run();  // Only if Blynk is alive
   timer.run();  //Handle timed functions like sendSensorData()
 }

@@ -23,10 +23,11 @@ void connectToWiFi() {
   WiFi.begin(ssid, pass);
   Serial.print("Connecting to WiFi");
   showMessage("WiFi Status:", "Connecting...");
+  delayHere(1000);
 
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 1000) {
-    delayHere(300);  
+  while (WiFi.status() != WL_CONNECTED && attempts < 30) {
+    delayHere(300);
     Serial.print(".");
     attempts++;
   }
@@ -34,7 +35,7 @@ void connectToWiFi() {
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("\nWiFi connected!");
     showMessage("WiFi Status:", "Connected");
-    delayHere(500);
+    delayHere(1000);
   } else {
     Serial.print("\nWiFi connection failed. Total attempts: ");
     Serial.println(attempts);
@@ -50,15 +51,22 @@ void setupBlynk() {
 
   if (WiFi.status() == WL_CONNECTED) {
     Blynk.config(BLYNK_AUTH_TOKEN);
-
-    if (Blynk.connect(2000)) {
-      Serial.println("Blynk connected!");
-      showMessage("Blynk Status:", "Connected");
-      delayHere(1000);
-    } else {
-      Serial.println("Blynk connection failed.");
-      showMessage("Blynk Status:", "Failed");
-      delayHere(1000);
+    int attempts = 0;
+    while (!Blynk.connected() && attempts < 20) {
+      Blynk.connect();  // Try connecting to Blynk cloud
+      Serial.print(".");
+      delayHere(500);
+      attempts++;
     }
+
+    if (Blynk.connected()) {
+      Serial.println("\nBlynk connected!");
+      showMessage("Blynk Status:", "Connected");
+    } else {
+      Serial.println("\nBlynk connection failed.");
+      showMessage("Blynk Status:", "Failed");
+    }
+
+    delayHere(1000);
   }
 }
