@@ -9,8 +9,25 @@ FirebaseAuth auth;
 FirebaseConfig config;
 
 // Setup NTP for IST (GMT+5:30)
+// Setup NTP for IST (GMT+5:30) with multiple servers for redundancy
 void setupNTP() {
-  configTime(19800, 0, "pool.ntp.org");
+  configTime(19800, 0, "pool.ntp.org", "time.nist.gov", "time.google.com");
+
+  struct tm timeinfo;
+  int retries = 0;
+  const int maxRetries = 30;
+  Serial.print("Waiting for NTP sync...");
+  while (!getLocalTime(&timeinfo) && retries < maxRetries) {
+    Serial.print(".");
+    delay(200);
+    retries++;
+  }
+
+  if (retries < maxRetries) {
+    Serial.println("NTP time sync successful.");
+  } else {
+    Serial.println("NTP time sync failed.");
+  }
 }
 
 // Return formatted timestamp
@@ -58,6 +75,9 @@ void logSensorData(const SensorData &data) {
   json.set("moisture", data.moisture);
   json.set("moistureStatus", data.moistureStatus);
   json.set("timestamp", getTimestamp());
+  json.set("nitrogen", data.nitrogen);
+  json.set("potassium", data.potassium);
+  json.set("phosphorous", data.phosphorous);
 
   String timestampKey = String(time(nullptr));  // Unix timestamp
 
