@@ -75,9 +75,9 @@ void logSensorData(const SensorData &data) {
   json.set("moisture", data.moisture);
   json.set("moistureStatus", data.moistureStatus);
   json.set("timestamp", getTimestamp());
-  json.set("nitrogen", data.nitrogen);
-  json.set("potassium", data.potassium);
-  json.set("phosphorous", data.phosphorous);
+  json.set("nitrogen(mg/Kg)", data.nitrogen);
+  json.set("potassium(mg/Kg)", data.potassium);
+  json.set("phosphorous(mg/Kg)", data.phosphorous);
 
   String timestampKey = String(time(nullptr));  // Unix timestamp
 
