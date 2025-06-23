@@ -7,8 +7,8 @@
 #include <BlynkSimpleEsp32.h>
 #include "Display.h"  // Custom LCD wrapper
 
-char ssid[] = "Galaxy";
-char pass[] = "wangmo1999";
+char ssid[] = "chosphel";
+char pass[] = "chopel123";
 
 // Non-blocking delay function
 void delayHere(unsigned long totalTime) {
