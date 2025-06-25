@@ -1,6 +1,6 @@
 #include "NPKSensor.h"
 
-// MODBUS commands
+// MODBUS commands for N, P, K
 const byte N_CMD[8] = { 0x01, 0x03, 0x00, 0x1E, 0x00, 0x01, 0xE4, 0x0C };
 const byte P_CMD[8] = { 0x01, 0x03, 0x00, 0x1F, 0x00, 0x01, 0xB5, 0xCC };
 const byte K_CMD[8] = { 0x01, 0x03, 0x00, 0x20, 0x00, 0x01, 0x85, 0xC0 };
@@ -24,23 +24,23 @@ void setReceiveMode() {
 }
 
 int sendAndReadSensor(const byte* cmd) {
-  byte values[11];
+  byte values[11];  // response buffer
   setTransmitMode();
   delay(10);
   Serial2.write(cmd, 8);
   Serial2.flush();
   setReceiveMode();
-  delay(200);
+  delay(200);  // allow sensor to respond
 
   byte i = 0;
   unsigned long start = millis();
-  while (i < 7 && millis() - start < 300) {
+  while (i < 8 && millis() - start < 500) {
     if (Serial2.available()) {
       values[i++] = Serial2.read();
     }
   }
-
-  if (i < 5) return -1;  // Incomplete response
+  // Check response validity
+  if (i < 5 || values[0] != 0x01 || values[1] != 0x03) return -1;
   return (values[3] << 8) | values[4];
 }
 

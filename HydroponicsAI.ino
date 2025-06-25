@@ -16,12 +16,16 @@ void printSensorData(const SensorData& data) {
                 data.temperature, data.humidity, data.ph, data.moisture, data.moistureStatus.c_str(),
                 data.nitrogen, data.phosphorous, data.potassium);
 }
-
-
+void printExecuted(const String& function_name) {
+  if (DEBUG) {
+    Serial.println(function_name + " executed successfully.");
+  }
+}
 //This will update the values in the Blynk app
 void updateBlynkData(const SensorData& data) {
   // Virtual pin assignment
   // V0 = Temp, V1 = Humidity, V2 = pH, V3 = Moisture
+  // V4 = Nitro, V6 = Phosphorous, V7 = Potassium
 
   // Internal threshold constants
   static float lastTemperature = -100.0;
@@ -90,11 +94,6 @@ void sendSensorData() {
   displayReadings(data);  // Display on LCD
   logSensorData(data);    //Function to send data to the firebase
 }
-void printExecuted(const String& function_name) {
-  if (DEBUG) {
-    Serial.println(function_name + " executed successfully.");
-  }
-}
 void setup() {
   Serial.begin(115200);
   printExecuted("Serial Monitor");
@@ -126,8 +125,10 @@ void setup() {
   setupFirebase();
   printExecuted("[setupFirebase()], Firebase");
 
+  
   showMessage("Hydroponics", "System Ready");
 
+  // timer.setInterval(5000L, runServoCycle);
   timer.setInterval(10000L, sendSensorData);  // Call sendSensorData every 10 seconds
   printExecuted("[timer.setInterval], sendSensorData");
 }
@@ -137,4 +138,5 @@ void loop() {
 
   Blynk.run();  // Only if Blynk is alive
   timer.run();  //Handle timed functions like sendSensorData()
+  // runServoCycle();
 }

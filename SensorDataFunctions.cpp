@@ -25,7 +25,7 @@ SensorData getAllSensorData() {
     data.valid = false;
     data.errorMsg += "Tmp ";//Error message that is to be print on LCD screen 
   }
-  if (isnan(data.humidity)) {
+  if (isnan(data.humidity) || data.humidity < 0) {
     Serial.println("Failed to read humidity from DHT sensor!");
     data.valid = false;
     data.errorMsg += "Hum ";
@@ -44,6 +44,19 @@ SensorData getAllSensorData() {
     Serial.println("Failed to read from the moisture sensor!");
     data.valid = false;
     data.errorMsg += "Moi ";
+  }
+
+  if(isnan(data.potassium)||isnan(data.phosphorous)||isnan(data.nitrogen))
+  {
+    Serial.println("Faild to red from npk sensor!");
+    data.valid = false;
+    data.errorMsg += "npk";
+  }
+  if(data.potassium < 0 || data.phosphorous < 0 || data.nitrogen < 0)
+  {
+    Serial.println("Value OOB for npk!");
+    data.valid = false;
+    data.errorMsg += "npk OOB";
   }
 
   return data;

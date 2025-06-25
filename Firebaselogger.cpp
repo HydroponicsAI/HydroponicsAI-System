@@ -10,7 +10,7 @@ FirebaseConfig config;
 
 // Setup NTP for IST (GMT+5:30)
 void setupNTP() {
-  configTime(19800, 0, "pool.ntp.org");
+  configTime(19800, 0, "pool.ntp.org", "time.nist.gov", "time.google.com");
 }
 
 // Return formatted timestamp
@@ -58,6 +58,9 @@ void logSensorData(const SensorData &data) {
   json.set("moisture", data.moisture);
   json.set("moistureStatus", data.moistureStatus);
   json.set("timestamp", getTimestamp());
+  json.set("nitrogen", data.nitrogen);
+  json.set("potassium", data.potassium);
+  json.set("phosphorous", data.phosphorous);
 
   String timestampKey = String(time(nullptr));  // Unix timestamp
 

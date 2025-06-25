@@ -53,17 +53,14 @@ void displayReadings(const SensorData& data) {
       case 1:
         // Page 2: NPK values with unit after each
         lcd.setCursor(0, 0);
-        lcd.print("N:");
+        lcd.print("In (mg/Kg) N:");
         lcd.print(data.nitrogen);
-        lcd.print("mg/Kg");
 
         lcd.setCursor(0, 1);
         lcd.print("P:");
         lcd.print(data.phosphorous);
-        lcd.print("mg/Kg ");
         lcd.print("K:");
         lcd.print(data.potassium);
-        lcd.print("mg/Kg");
         break;
     }
   }

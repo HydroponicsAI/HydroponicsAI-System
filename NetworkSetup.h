@@ -5,7 +5,7 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
-#include "Display.h"  // Custom LCD wrapper
+#include "Display.h"  
 
 char ssid[] = "chosphel";
 char pass[] = "chopel123";
@@ -66,7 +66,6 @@ void setupBlynk() {
       Serial.println("\nBlynk connection failed.");
       showMessage("Blynk Status:", "Failed");
     }
-
     delayHere(1000);
   }
 }
