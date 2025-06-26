@@ -7,8 +7,8 @@
 #include <BlynkSimpleEsp32.h>
 #include "Display.h"  
 
-char ssid[] = "innovation";
-char pass[] = "xxxxxxxxx";
+char ssid[] = "Nielit Ftth 4G";
+char pass[] = "xxxxxxxxxx";//update with actual password
 
 // Non-blocking delay function
 void delayHere(unsigned long totalTime) {
